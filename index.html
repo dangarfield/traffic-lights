@@ -4,7 +4,6 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
     <title>Traffic Lights</title>
     <style>
         body,
@@ -24,27 +23,27 @@
         }
 
         .b.inactive {
-            background-image: url("/assets/b-inactive.png");
+            background-image: url("assets/b-inactive.png");
         }
 
         .b.wait {
-            background-image: url("/assets/b-wait.png");
+            background-image: url("assets/b-wait.png");
         }
 
         .b.active {
-            background-image: url("/assets/b-active.png");
+            background-image: url("assets/b-active.png");
         }
 
         .l.inactive {
-            background-image: url("/assets/l-inactive.png");
+            background-image: url("assets/l-inactive.png");
         }
 
         .l.wait {
-            background-image: url("/assets/l-wait.png");
+            background-image: url("assets/l-wait.png");
         }
 
         .l.active {
-            background-image: url("/assets/l-active.png");
+            background-image: url("assets/l-active.png");
         }
     </style>
 </head>
@@ -69,6 +68,7 @@
             subscribeKey: "sub-c-e06cc5aa-1eb0-11ea-9033-6eee1514e1ef",
             uuid: uuid
         })
+        const channel = 'traffic_lights'
 
         let status = 'inactive'
         let params = new URLSearchParams(window.location.search)
@@ -82,7 +82,7 @@
         const maxWaitTime = 6
         const walkTime = 6
 
-        let sound = new Audio('/assets/traffic-light-sound.mp3')
+        let sound = new Audio('assets/traffic-light-sound.mp3')
 
         const setStatus = (newStatus) => {
             console.log('Status: ' + newStatus)
@@ -90,7 +90,7 @@
             $('.lights').not('.' + type).hide()
             $('.lights.' + type).not('.' + status).hide()
             $('.lights.' + type + '.' + status).show()
-            if (newStatus === 'active' && type === 'l') {
+            if (newStatus === 'active' && type === 'b') {
                 sound.play()
             } else {
                 sound.pause()
@@ -99,10 +99,10 @@
         }
         const sendStatus = (status) => {
             pubnub.publish({
-                channel: "pubnub_onboarding_channel",
+                channel: channel,
                 message: {
-                    "sender": uuid,
-                    "content": {
+                    sender: uuid,
+                    content: {
                         id: id,
                         status: status
                     }
@@ -128,7 +128,7 @@
             }
         }
         pubnub.subscribe({
-            channels: ['pubnub_onboarding_channel'],
+            channels: [channel],
             withPresence: false
         })
 
@@ -150,9 +150,6 @@
             }
         })
     </script>
-    <!-- <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
 </body>
 
 </html>
