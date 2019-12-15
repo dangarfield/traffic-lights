@@ -22,28 +22,43 @@
             cursor: pointer;
         }
 
-        .b.inactive {
-            background-image: url("assets/b-inactive.png");
-        }
-
         .b.wait {
             background-image: url("assets/b-wait.png");
         }
 
-        .b.active {
-            background-image: url("assets/b-active.png");
+        .b.stopping,
+        .b.walk,
+        .b.going,
+        .b.inactive {
+            background-image: url("assets/b-inactive.png");
         }
 
+        .p.wait,
+        .p.stopping,
+        .p.going,
+        .p.inactive {
+            background-image: url("assets/p-stop.png");
+        }
+
+        .p.walk {
+            background-image: url("assets/p-walk.png");
+        }
+
+        .l.wait,
         .l.inactive {
-            background-image: url("assets/l-inactive.png");
+            background-image: url("assets/l-green.png");
         }
 
-        .l.wait {
-            background-image: url("assets/l-wait.png");
+        .l.stopping {
+            background-image: url("assets/l-redamber.png");
         }
 
-        .l.active {
-            background-image: url("assets/l-active.png");
+        .l.walk {
+            background-image: url("assets/l-red.png");
+        }
+
+        .l.going {
+            background-image: url("assets/l-amber.png");
         }
     </style>
 </head>
@@ -51,12 +66,22 @@
 <body>
 
     <div class="lights b wait" style="display:none;"></div>
-    <div class="lights b active" style="display:none;"></div>
+    <div class="lights b stopping" style="display:none;"></div>
+    <div class="lights b walk" style="display:none;"></div>
+    <div class="lights b going" style="display:none;"></div>
     <div class="lights b inactive"></div>
 
     <div class="lights l wait" style="display:none;"></div>
-    <div class="lights l active" style="display:none;"></div>
+    <div class="lights l stopping" style="display:none;"></div>
+    <div class="lights l walk" style="display:none;"></div>
+    <div class="lights l going" style="display:none;"></div>
     <div class="lights l inactive"></div>
+
+    <div class="lights p wait" style="display:none;"></div>
+    <div class="lights p stopping" style="display:none;"></div>
+    <div class="lights p walk" style="display:none;"></div>
+    <div class="lights p going" style="display:none;"></div>
+    <div class="lights p inactive"></div>
 
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -70,7 +95,7 @@
         })
         const channel = 'traffic_lights'
 
-        let status = 'inactive'
+        let status = 'inactive' // wait, stopping, walk, going, inactive
         let params = new URLSearchParams(window.location.search)
         if (!params.has('id') && !params.has('type')) {
             location.replace('?id=1&type=b')
@@ -90,7 +115,7 @@
             $('.lights').not('.' + type).hide()
             $('.lights.' + type).not('.' + status).hide()
             $('.lights.' + type + '.' + status).show()
-            if (newStatus === 'active' && type === 'b') {
+            if (newStatus === 'walk' && type === 'b') {
                 sound.play()
             } else {
                 sound.pause()
@@ -116,14 +141,22 @@
             return Math.floor(Math.random() * ((maxWaitTime * 1000) - (minWaitTime * 1000) + 1) + (minWaitTime *
                 1000))
         }
+
+        // wait, stopping, walk, going, inactive
         const triggerWait = () => {
             if (status === 'inactive') {
                 sendStatus('wait')
                 setTimeout(function () {
-                    sendStatus('active')
+                    sendStatus('stopping')
                     setTimeout(function () {
-                        sendStatus('inactive')
-                    }, walkTime * 1000)
+                        sendStatus('walk')
+                        setTimeout(function () {
+                            sendStatus('going')
+                            setTimeout(function () {
+                                sendStatus('inactive')
+                            }, 1000)
+                        }, walkTime * 1000)
+                    }, 1000)
                 }, randWaitTime())
             }
         }
