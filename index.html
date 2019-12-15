@@ -22,15 +22,30 @@
             cursor: pointer;
         }
 
-        .b.wait {
+        .b.wait,
+        .b.stopping {
             background-image: url("assets/b-wait.png");
         }
 
-        .b.stopping,
+
         .b.walk,
         .b.going,
         .b.inactive {
             background-image: url("assets/b-inactive.png");
+        }
+
+        .bp.inactive,
+        .bp.going {
+            background-image: url("assets/bp-inactive.png");
+        }
+
+        .bp.wait,
+        .bp.stopping {
+            background-image: url("assets/bp-wait.png");
+        }
+
+        .bp.walk {
+            background-image: url("assets/bp-walk.png");
         }
 
         .p.wait,
@@ -83,6 +98,12 @@
     <div class="lights p going" style="display:none;"></div>
     <div class="lights p inactive"></div>
 
+    <div class="lights bp wait" style="display:none;"></div>
+    <div class="lights bp stopping" style="display:none;"></div>
+    <div class="lights bp walk" style="display:none;"></div>
+    <div class="lights bp going" style="display:none;"></div>
+    <div class="lights bp inactive"></div>
+
     <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
@@ -115,7 +136,7 @@
             $('.lights').not('.' + type).hide()
             $('.lights.' + type).not('.' + status).hide()
             $('.lights.' + type + '.' + status).show()
-            if (newStatus === 'walk' && type === 'b') {
+            if (newStatus === 'walk' && (type === 'b' || type === 'bp')) {
                 sound.play()
             } else {
                 sound.pause()
@@ -175,10 +196,9 @@
         })
         $(document).ready(function () {
             setStatus('inactive')
-            if (type === 'b') {
+            if (type === 'b' || type === 'bp') {
                 $('.lights').click(function () {
                     triggerWait()
-                    // sendStatus('wait')
                 })
             }
         })
