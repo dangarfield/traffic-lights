@@ -201,7 +201,7 @@
         $(document).ready(function () {
             setStatus('inactive')
             if (type === 'b' || type === 'bp') {
-                $('.lights').click(function () {
+                $('.lights').bind('mousedown touchstart', function () {
                     triggerWait()
                 })
             }
